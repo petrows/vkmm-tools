@@ -32,6 +32,7 @@ public:
 	bool login();
 
 	quint64 getUid() { return userId; }
+	QString getToken() { return userToken; }
 
 	QUrl getLoginUrl();
 	QString getLoginBasePath();

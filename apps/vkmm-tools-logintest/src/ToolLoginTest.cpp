@@ -3,6 +3,7 @@
 #include <LoginManager.h>
 #include <CommandLine.h>
 #include <VkApi.h>
+#include <VkApiMethods.h>
 
 using namespace VKMM;
 
@@ -29,11 +30,27 @@ void ToolLoginTest::onLoginStatus(LoginManager::LoginState state)
 		// Login is ok!
 		LOG_M(L"Congrats! Login seems to be working... Get our user");
 
-		// QCoreApplication::exit(0);
-
 		VkApiGetUser * userReqest = new VkApiGetUser(LoginManager::instance()->getUid());
+		connect(userReqest, &VkApiGetUser::finished, [this, userReqest](bool isOk) {
+			if (isOk)
+			{
+				onUserInfo(userReqest->getUser());
+			} else {
+				LOG_E(L"Request error!");
+				QCoreApplication::instance()->exit(1);
+			}
+		});
+
+		VkApi::instance()->request(userReqest);
+
 		return;
 	}
 
 	LOG_E(L"Error! Login state = " << state);
+}
+
+void ToolLoginTest::onUserInfo(VkUser user)
+{
+	LOG_M(L"User: " << user.name << L", id = " << user.id);
+	QCoreApplication::instance()->exit(0);
 }

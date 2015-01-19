@@ -4,6 +4,7 @@
 
 #include <LoginManager.h>
 #include <QCommandLineParser>
+#include <VkApiData.h>
 
 namespace VKMM {
 
@@ -20,6 +21,7 @@ public:
 
 private slots:
 	void onLoginStatus(LoginManager::LoginState state);
+	void onUserInfo(VkUser user);
 };
 
 }

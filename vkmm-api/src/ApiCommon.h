@@ -6,6 +6,8 @@
 #include <QDir>
 #include <QUrl>
 
+#include "VkApiData.h"
+
 namespace VKMM {
 
 #define WIDE2(x) L##x
@@ -13,6 +15,8 @@ namespace VKMM {
 #define WFILE WIDE1(__FILE__)
 
 QString formatDateTime(time_t tms);
+inline QString formatSafeFilename(QString name) { return name; }
+inline QString formatSafeFilename(VkAudio audio) { return formatSafeFilename(audio.artist + " - " + audio.title + ".mp3"); }
 
 }
 
