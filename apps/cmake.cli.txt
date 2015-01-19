@@ -1,0 +1,18 @@
+cmake_minimum_required (VERSION 2.8)
+
+get_filename_component (APP_ROOT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+set (PROJECT "${APP_ROOT_NAME}")
+project (${PROJECT})
+
+file(GLOB_RECURSE APP_SRC "src/*.cpp")
+file(GLOB_RECURSE APP_H "src/*.cpp")
+
+# Tell CMake to create the helloworld executable
+add_executable(${PROJECT} ${APP_H} ${APP_SRC})
+
+# Use the Widgets module from Qt 5.
+target_link_libraries(${PROJECT} vkmmapi Qt5::Core Qt5::Network)
+
+qt5_use_modules(${PROJECT} Core)
+qt5_use_modules(${PROJECT} Network)

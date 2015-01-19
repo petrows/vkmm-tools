@@ -1,0 +1,30 @@
+cmake_minimum_required (VERSION 2.8)
+
+get_filename_component (APP_ROOT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+set (PROJECT "${APP_ROOT_NAME}")
+project (${PROJECT})
+
+find_package(Qt5Widgets)
+find_package(Qt5WebKit)
+find_package(Qt5WebKitWidgets)
+
+file(GLOB_RECURSE APP_SRC "src/*.cpp")
+file(GLOB_RECURSE APP_H "src/*.cpp")
+file(GLOB_RECURSE APP_UI "ui/*.ui")
+file(GLOB_RECURSE APP_UI_SRC "ui/*.cpp")
+file(GLOB_RECURSE APP_UI_H "ui/*.h")
+
+qt5_wrap_ui(UI_FILES ${APP_UI})
+
+# Tell CMake to create the helloworld executable
+add_executable(${PROJECT} ${UI_FILES} ${APP_UI} ${APP_UI_H} ${APP_UI_SRC} ${APP_H} ${APP_SRC})
+
+# Use the Widgets module from Qt 5.
+target_link_libraries(${PROJECT} vkmmapi Qt5::Core Qt5::WebKit Qt5::WebKitWidgets Qt5::Widgets Qt5::Network)
+
+qt5_use_modules(${PROJECT} Core)
+qt5_use_modules(${PROJECT} WebKit)
+qt5_use_modules(${PROJECT} WebKitWidgets)
+qt5_use_modules(${PROJECT} Widgets)
+qt5_use_modules(${PROJECT} Network)
