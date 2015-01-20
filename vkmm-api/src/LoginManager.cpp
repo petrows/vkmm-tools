@@ -140,6 +140,7 @@ void LoginManager::onLoginRequestFinished()
 	{
 		// Redirect?
 		QString newLocation = rep->header(QNetworkRequest::LocationHeader).toString();
+		rep->deleteLater();
 
 		if (!newLocation.isEmpty())
 		{

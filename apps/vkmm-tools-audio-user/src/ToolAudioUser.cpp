@@ -108,7 +108,7 @@ void ToolAudioUser::onAudioResult(bool isOk)
 	if (downLoaded >= countTotal)
 	{
 		// All done!
-		LOG_D(L"All done!");
+		LOG_D(L"Get audios list is done");
 
 		// Start download audios!
 		currentItemIndex = audios.size() - 1;
@@ -124,39 +124,58 @@ void ToolAudioUser::onAudioResult(bool isOk)
 void ToolAudioUser::onFileDownloadFinish()
 {
 	QNetworkReply * rep = qobject_cast<QNetworkReply*>(sender());
-	QString outFilePath = outputDir.absoluteFilePath(formatSafeFilename(audios.at(currentItemIndex)));
-	LOG_D(L"Downloaded size: " << rep->bytesAvailable() << L", file " << outFilePath);
+	QString outFileName = formatSafeFilename(audios.at(currentItemIndex));
+	QString outFilePath = outputDir.absoluteFilePath(outFileName);
+	LOG_M(L"Downloaded size: " << rep->bytesAvailable() << L", file: " << outFileName);
 
 	QFile outFile(outFilePath);
-	outFile.open(QIODevice::WriteOnly);
-	outFile.write(rep->readAll());
-	outFile.close();
-
-	// Next file?
-	if (0 == currentItemIndex)
+	if (outFile.open(QIODevice::WriteOnly))
 	{
-		// All done!
-		LOG_M(L"All done!!!!");
-		QCoreApplication::instance()->exit(0);
-		return;
+		outFile.write(rep->readAll());
+		outFile.close();
+	} else {
+		LOG_E(L"Error open file for writing: " << outFilePath);
 	}
+
 	currentItemIndex--;
 	startDownloadItem();
 }
 
 void ToolAudioUser::startDownloadItem()
 {
+	if (currentItemIndex < 0)
+	{
+		// All done!
+		displaySkipped();
+		LOG_M(L"All done!");
+		QCoreApplication::instance()->exit(0);
+		return;
+	}
+	
 	// Check - has file on disk?
 	if (QFile(outputDir.absoluteFilePath(formatSafeFilename(audios.at(currentItemIndex)))).exists())
 	{
+		countSkipped++;
 		// File exists
-		LOG_M(L"File exists - " << outputDir.absoluteFilePath(formatSafeFilename(audios.at(currentItemIndex))));
+		// LOG_D(L"File exists - " << outputDir.absoluteFilePath(formatSafeFilename(audios.at(currentItemIndex))));
 		currentItemIndex--;
 		startDownloadItem();
 		return;
 	}
+	
+	displaySkipped();
+	
 	VkAudio item = audios.at(currentItemIndex);
 	QNetworkRequest req(item.url);
 	QNetworkReply * rep = NetworkAccess::instance()->get(req);
 	connect(rep, &QNetworkReply::finished, this, &ToolAudioUser::onFileDownloadFinish);
+}
+
+void ToolAudioUser::displaySkipped()
+{
+	if (countSkipped > 0)
+	{
+		LOG_M(L"Skipped files: " << countSkipped);
+		countSkipped = 0;
+	}
 }

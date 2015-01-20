@@ -15,8 +15,8 @@ namespace VKMM {
 #define WFILE WIDE1(__FILE__)
 
 QString formatDateTime(time_t tms);
-inline QString formatSafeFilename(QString name) { return name; }
-inline QString formatSafeFilename(VkAudio audio) { return formatSafeFilename(audio.artist + " - " + audio.title + ".mp3"); }
+QString formatSafeFilename(QString name);
+QString formatSafeFilename(VkAudio audio);
 
 }
 
