@@ -16,6 +16,11 @@ int ToolAudioUser::init()
 	CommandLine::instance()->addHelpOption();
 	LoginManager::instance()->setCmdParams();
 	CommandLine::instance()->addPositionalArgument("<dir>", "Output directory for audio files");
+
+	QCommandLineOption optionUser("user", "Target user to download (only user ID is supported). Default - current user.");
+	optionUser.setDefaultValue(0);
+	optionUser.setValueName("id");
+	CommandLine::instance()->addOption(optionUser);
 	
 	CommandLine::instance()->process(*QCoreApplication::instance());
 
@@ -25,10 +30,8 @@ int ToolAudioUser::init()
 		CommandLine::instance()->showHelp(1);
 		return 1;
 	}
-	QString savePath = CommandLine::instance()->positionalArguments().at(0);
-	QDir().mkpath(savePath);
-	outputDir = QDir(savePath);
-	LOG_M(L"Save direcotry: " << outputDir);
+
+	targetUid = CommandLine::instance()->value(optionUser).toInt();
 
 	if (!LoginManager::instance()->init()) return 1;
 
@@ -47,8 +50,13 @@ void ToolAudioUser::onLoginStatus(LoginManager::LoginState state)
 		return;
 	}
 
-	LOG_M(L"Request user info");
-	VkApiGetUser * userReqest = new VkApiGetUser(LoginManager::instance()->getUid());
+	if (0 == targetUid)
+	{
+		targetUid = LoginManager::instance()->getUid();
+	}
+
+	LOG_M(L"Request user info for id = " << targetUid);
+	VkApiGetUser * userReqest = new VkApiGetUser(targetUid);
 	connect(userReqest, &VkApiGetUser::finished, [this, userReqest](bool isOk) {
 		if (isOk)
 		{
@@ -66,6 +74,12 @@ void ToolAudioUser::onUserInfo(VkUser userData)
 {
 	user = userData;
 	LOG_M(L"Downloading user: " << user.name << L" (id:" << user.id << L")");
+
+	QString savePath = CommandLine::instance()->positionalArguments().at(0);
+	QString userPath = formatPathSetters(savePath, user);
+	QDir().mkpath(userPath);
+	outputDir = QDir(userPath);
+	LOG_M(L"Downloading path: " << outputDir);
 
 	VkApiGetAudio * audioReqest = new VkApiGetAudio(user.id, requestCount, 0);
 	connect(audioReqest, &VkApiGetAudio::finished, this, &ToolAudioUser::onAudioResult);
@@ -126,7 +140,7 @@ void ToolAudioUser::onFileDownloadFinish()
 	QNetworkReply * rep = qobject_cast<QNetworkReply*>(sender());
 	QString outFileName = formatSafeFilename(audios.at(currentItemIndex));
 	QString outFilePath = outputDir.absoluteFilePath(outFileName);
-	LOG_M(L"Downloaded size: " << rep->bytesAvailable() << L", file: " << outFileName);
+	LOG_M(L"Downloaded size: " << formatSize(rep->bytesAvailable()) << L", file: " << outFileName);
 
 	QFile outFile(outFilePath);
 	if (outFile.open(QIODevice::WriteOnly))

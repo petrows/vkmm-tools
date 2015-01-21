@@ -25,7 +25,7 @@ void LoginManager::setCmdParams()
 {
 	// An option with a value
 	loginTargetDirOption.setDefaultValue("./login");
-	loginTargetDirOption.setValueName("<dir>");
+	loginTargetDirOption.setValueName("dir");
 	loginTargetDirOption.setDescription("Directory with login cookies and data for target user (generated with vkmm-tools-login)");
 
 	CommandLine::instance()->addOption(loginTargetDirOption);

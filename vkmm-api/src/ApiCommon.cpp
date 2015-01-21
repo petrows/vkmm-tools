@@ -15,8 +15,9 @@ QString formatSafeFilename(QString name)
 {
 	QString out = name.trimmed();
 	out = out.replace("&amp;", "&");
+	out = out.replace(QRegExp("\\s+"), " ");
 
-	const char * denySymbols = "\\/?:*|\"";
+	const char * denySymbols = "\\/?:*|\"'";
 	while (0x00 != *denySymbols)
 	{
 		out = out.replace(*denySymbols, "");
@@ -26,12 +27,45 @@ QString formatSafeFilename(QString name)
 	return out;
 }
 
-QString formatSafeFilename(VkAudio audio)
+QString formatSafeFilename(const VkAudio &audio)
 {
 	QString outName = formatSafeFilename(QString(audio.artist + " - " + audio.title));
 	outName = outName.left(128);
 	if (outName.isEmpty()) outName = QString("audio-") + QString::number(audio.id);
 	return outName + ".mp3";
+}
+
+QString formatPathSetters(QString path, const VkUser &user)
+{
+	// Replace user defs
+	path = path.replace("%uid%", formatSafeFilename(QString::number(user.id)));
+	path = path.replace("%uname%", formatSafeFilename(user.name));
+	return path;
+}
+
+QString formatSize(quint64 sz, QString format)
+{
+	QString pt;
+	float   out = 0.0f;
+
+	if (sz < 1024L)
+	{
+		pt  = QObject::tr("bytes");
+		out = sz;
+	} else if (sz < 1024L*1024L) {
+		pt  = QObject::tr("Kb");
+		out = (long double)sz/(long double)(1024L);
+	} else if (sz < 1024L*1024L*1024L) {
+		pt  = QObject::tr("Mb");
+		out = (long double)sz/(long double)(1024L*1024L);
+	} else {
+		pt  = QObject::tr("Gb");
+		out = (long double)sz/(long double)(1024L*1024L*1024L);
+	}
+
+	QString ret = QString().sprintf(format.toStdString().c_str(),out);
+	ret = ret.replace("{S}", pt);
+	return  ret;
 }
 
 }
