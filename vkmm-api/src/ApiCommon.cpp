@@ -27,12 +27,32 @@ QString formatSafeFilename(QString name)
 	return out;
 }
 
-QString formatSafeFilename(const VkAudio &audio)
+QString formatSafeFilename(const VkAudioPtr &audio)
 {
-	QString outName = formatSafeFilename(QString(audio.artist + " - " + audio.title));
+	QString outName = formatSafeFilename(QString(audio->artist + " - " + audio->title));
 	outName = outName.left(128);
-	if (outName.isEmpty()) outName = QString("audio-") + QString::number(audio.id);
-	return outName + ".mp3";
+	if (outName.isEmpty()) outName = QString("audio-") + QString::number(audio->id);
+	return outName;
+}
+
+void formatSafeFilenames(VkAudioList &audioList)
+{
+	QStringList fileNames;
+	for (int x = audioList.size() - 1; x>=0; x--)
+	{
+		VkAudioPtr audio = audioList.at(x);
+		// Generate filename
+		QString fName = formatSafeFilename(audio);
+		QString fNameOut = fName;
+		int indexZ = 0;
+		while (fileNames.contains(fNameOut, Qt::CaseInsensitive))
+		{
+			indexZ++;
+			fNameOut = fName + "_" + QString::number(indexZ);
+		}
+		fileNames.push_back(fNameOut);
+		audio->fileName = fNameOut + ".mp3";
+	}
 }
 
 QString formatPathSetters(QString path, const VkUser &user)

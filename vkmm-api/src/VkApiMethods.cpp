@@ -21,16 +21,16 @@ VkUser VkApiMethod::parseUser(const QJsonObject &value)
 	return out;
 }
 
-VkAudio VkApiMethod::parseAudio(const QJsonObject &value)
+VkAudioPtr VkApiMethod::parseAudio(const QJsonObject &value)
 {
-	VkAudio out;
-	out.id = value["aid"].toInt();
-	out.uid = value["owner_id"].toInt();
-	out.title = value["title"].toString();
-	out.artist = value["artist"].toString();
-	out.duration = value["duration"].toInt();
-	out.album = value["album_id"].toInt();
-	out.url = QUrl(value["url"].toString());
+	VkAudioPtr out(new VkAudio());
+	out->id = value["aid"].toInt();
+	out->uid = value["owner_id"].toInt();
+	out->title = value["title"].toString();
+	out->artist = value["artist"].toString();
+	out->duration = value["duration"].toInt();
+	out->album = value["album_id"].toInt();
+	out->url = QUrl(value["url"].toString());
 	return out;
 }
 

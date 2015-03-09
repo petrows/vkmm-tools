@@ -124,6 +124,10 @@ void ToolAudioUser::onAudioResult(bool isOk)
 		// All done!
 		LOG_D(L"Get audios list is done");
 
+		// Update audios list size
+		// Will test on duplicates and generate file names
+		formatSafeFilenames(audios);
+
 		// Start download audios!
 		currentItemIndex = audios.size() - 1;
 		startDownloadItem();
@@ -138,7 +142,7 @@ void ToolAudioUser::onAudioResult(bool isOk)
 void ToolAudioUser::onFileDownloadFinish()
 {
 	QNetworkReply * rep = qobject_cast<QNetworkReply*>(sender());
-	QString outFileName = formatSafeFilename(audios.at(currentItemIndex));
+	QString outFileName = audios.at(currentItemIndex)->fileName;
 	QString outFilePath = outputDir.absoluteFilePath(outFileName);
 	LOG_M(L"Downloaded size: " << formatSize(rep->bytesAvailable()) << L", file: " << outFileName);
 
@@ -167,7 +171,7 @@ void ToolAudioUser::startDownloadItem()
 	}
 	
 	// Check - has file on disk?
-	if (QFile(outputDir.absoluteFilePath(formatSafeFilename(audios.at(currentItemIndex)))).exists())
+	if (QFile(outputDir.absoluteFilePath(audios.at(currentItemIndex)->fileName)).exists())
 	{
 		countSkipped++;
 		// File exists
@@ -179,8 +183,8 @@ void ToolAudioUser::startDownloadItem()
 	
 	displaySkipped();
 	
-	VkAudio item = audios.at(currentItemIndex);
-	QNetworkRequest req(item.url);
+	VkAudioPtr item = audios.at(currentItemIndex);
+	QNetworkRequest req(item->url);
 	QNetworkReply * rep = NetworkAccess::instance()->get(req);
 	connect(rep, &QNetworkReply::finished, this, &ToolAudioUser::onFileDownloadFinish);
 }

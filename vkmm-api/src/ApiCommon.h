@@ -16,7 +16,8 @@ namespace VKMM {
 
 QString formatDateTime(time_t tms);
 QString formatSafeFilename(QString name);
-QString formatSafeFilename(const VkAudio & audio);
+QString formatSafeFilename(const VkAudioPtr &audio);
+void    formatSafeFilenames(VkAudioList & audioList);
 
 QString formatPathSetters(QString path, const VkUser & user);
 

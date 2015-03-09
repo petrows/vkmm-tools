@@ -20,7 +20,7 @@ public:
 	void setFinished(bool isOk);
 
 	static VkUser parseUser(const QJsonObject & value);
-	static VkAudio parseAudio(const QJsonObject & value);
+	static VkAudioPtr parseAudio(const QJsonObject & value);
 signals:
 	void finished(bool isOk);
 protected:
