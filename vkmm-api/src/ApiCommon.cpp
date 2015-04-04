@@ -45,12 +45,12 @@ void formatSafeFilenames(VkAudioList &audioList)
 		QString fName = formatSafeFilename(audio);
 		QString fNameOut = fName;
 		int indexZ = 0;
-		while (fileNames.contains(fNameOut, Qt::CaseInsensitive))
+		while (fileNames.contains(fNameOut.toLower()))
 		{
 			indexZ++;
 			fNameOut = fName + "_" + QString::number(indexZ);
 		}
-		fileNames.push_back(fNameOut);
+		fileNames.push_back(fNameOut.toLower());
 		audio->fileName = fNameOut + ".mp3";
 	}
 }
