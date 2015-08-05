@@ -11,6 +11,7 @@ set(CMAKE_AUTOMOC ON)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++11 -Wall")
 
 set(BUILD_SHARED_LIBS OFF)
+set(ENABLE_STATIC ON)
 
 # Find the QtWidgets library
 find_package(Qt5Core)
@@ -19,7 +20,12 @@ find_package(Qt5Network)
 include_directories("vkmm-api/src/")
 include_directories("qjson/include/")
 
+include_directories("taglib/taglib/")
+include_directories("taglib/taglib/toolkit")
+include_directories("${CMAKE_BINARY_DIR}/taglib")
+
 add_subdirectory(qjson)
+add_subdirectory(taglib)
 add_subdirectory(vkmm-api)
 
 # Add all apps to build

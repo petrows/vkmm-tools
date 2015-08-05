@@ -8,6 +8,13 @@
 #include <QNetworkReply>
 #include <NetworkAccess.h>
 
+#include <tag.h>
+#include <fileref.h>
+#include <mpeg/mpegfile.h>
+#include <mpeg/id3v2/id3v2tag.h>
+#include <mpeg/id3v2/frames/urllinkframe.h>
+#include <tstring.h>
+
 using namespace VKMM;
 
 int ToolAudioUser::init()
@@ -21,6 +28,9 @@ int ToolAudioUser::init()
 	optionUser.setDefaultValue(0);
 	optionUser.setValueName("id");
 	CommandLine::instance()->addOption(optionUser);
+
+	QCommandLineOption optionTags("tags", "(re)write tags to ouput files (id3v2, utf8 forced)");
+	CommandLine::instance()->addOption(optionTags);
 	
 	CommandLine::instance()->process(*QCoreApplication::instance());
 
@@ -32,6 +42,7 @@ int ToolAudioUser::init()
 	}
 
 	targetUid = CommandLine::instance()->value(optionUser).toInt();
+	writeTags = CommandLine::instance()->isSet(optionTags);
 
 	if (!LoginManager::instance()->init()) return 1;
 
@@ -142,7 +153,8 @@ void ToolAudioUser::onAudioResult(bool isOk)
 void ToolAudioUser::onFileDownloadFinish()
 {
 	QNetworkReply * rep = qobject_cast<QNetworkReply*>(sender());
-	QString outFileName = audios.at(currentItemIndex)->fileName;
+	VkAudioPtr audio = audios.at(currentItemIndex);
+	QString outFileName = audio->fileName;
 	QString outFilePath = outputDir.absoluteFilePath(outFileName);
 	LOG_M(L"Downloaded size: " << formatSize(rep->bytesAvailable()) << L", file: " << outFileName);
 
@@ -151,6 +163,27 @@ void ToolAudioUser::onFileDownloadFinish()
 	{
 		outFile.write(rep->readAll());
 		outFile.close();
+
+		if (writeTags)
+		{
+			LOG_D("Rewrite tags in file");
+			TagLib::MPEG::File tagFile(outFilePath.toStdString().c_str());
+			// Remove all
+			tagFile.strip(TagLib::MPEG::File::AllTags);
+			tagFile.save();
+
+			TagLib::ID3v2::Tag * tag = tagFile.ID3v2Tag(true);
+
+			TagLib::ID3v2::UserUrlLinkFrame *linkFrame = new TagLib::ID3v2::UserUrlLinkFrame();
+			linkFrame->setUrl("https://github.com/petrows/vkmm-tools");
+			linkFrame->setTextEncoding(TagLib::String::UTF8);
+			tag->addFrame(linkFrame);
+
+			tag->setTitle(TagLib::String(audio->title.toUtf8().constData(),TagLib::String::UTF8));
+			tag->setArtist(TagLib::String(audio->artist.toUtf8().constData(),TagLib::String::UTF8));
+			tag->setComment(TagLib::String(QString("Saved by vkmm-tools").toUtf8().constData(),TagLib::String::UTF8));
+			tagFile.save();
+		}
 	} else {
 		LOG_E(L"Error open file for writing: " << outFilePath);
 	}

@@ -1,3 +1,6 @@
 [submodule "qjson"]
 	path = qjson
 	url = git@github.com:petrows/qjson.git
+[submodule "taglib"]
+	path = taglib
+	url = git@github.com:petrows/taglib.git

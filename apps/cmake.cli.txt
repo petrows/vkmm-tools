@@ -11,8 +11,10 @@ file(GLOB_RECURSE APP_H "src/*.cpp")
 # Tell CMake to create the helloworld executable
 add_executable(${PROJECT} ${APP_H} ${APP_SRC})
 
+include_directories("../../taglib/taglib/mpeg/id3v2/")
+
 # Use the Widgets module from Qt 5.
-target_link_libraries(${PROJECT} vkmmapi Qt5::Core Qt5::Network)
+target_link_libraries(${PROJECT} tag vkmmapi Qt5::Core Qt5::Network)
 
 qt5_use_modules(${PROJECT} Core)
 qt5_use_modules(${PROJECT} Network)

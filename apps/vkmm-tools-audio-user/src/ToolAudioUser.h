@@ -14,7 +14,7 @@ class ToolAudioUser : public QObject, public Singleton<ToolAudioUser>
 	Q_OBJECT
 	friend class Singleton<ToolAudioUser>;
 protected:
-	ToolAudioUser() : currentItemIndex(-1), targetUid(0), countSkipped(0), countTotal(0), requestOffset(0), requestCount(1000) {}
+	ToolAudioUser() : writeTags(false), currentItemIndex(-1), targetUid(0), countSkipped(0), countTotal(0), requestOffset(0), requestCount(1000) {}
 	~ToolAudioUser() {}
 public:
 	int init();
@@ -30,6 +30,7 @@ private:
 	void startDownloadItem();
 
 	QDir outputDir;
+	bool writeTags;
 
 	qint64 currentItemIndex;
 
