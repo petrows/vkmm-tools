@@ -1,1 +1,1 @@
-../cmake.ui.txt
+include (../cmake.ui.txt)

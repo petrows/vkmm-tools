@@ -1,1 +1,1 @@
-../cmake.cli.txt
+include (../cmake.cli.txt)
