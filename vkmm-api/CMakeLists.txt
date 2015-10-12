@@ -3,6 +3,9 @@ cmake_minimum_required (VERSION 2.8)
 set (PROJECT "vkmmapi")
 project (${PROJECT})
 
+cmake_policy(SET CMP0043 OLD)
+cmake_policy(SET CMP0020 NEW)
+
 file(GLOB_RECURSE API_SRC "src/*.cpp")
 file(GLOB_RECURSE API_H "src/*.h")
 

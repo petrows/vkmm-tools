@@ -3,6 +3,9 @@ cmake_minimum_required (VERSION 2.8)
 set (PROJECT "vkmm-tools")
 project (${PROJECT})
 
+cmake_policy(SET CMP0043 OLD)
+cmake_policy(SET CMP0020 NEW)
+
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
@@ -48,5 +51,6 @@ add_subdirectory(vkmm-api)
 file(GLOB APPS_LIST "apps/vkmm-tools-*")
 
 foreach(APP_TOOL ${APPS_LIST})
+	get_filename_component(APP_NAME "${APP_TOOL}" NAME)
 	add_subdirectory("${APP_TOOL}")
 endforeach()

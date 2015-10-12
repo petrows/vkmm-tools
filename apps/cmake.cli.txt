@@ -5,12 +5,19 @@ get_filename_component (APP_ROOT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 set (PROJECT "${APP_ROOT_NAME}")
 project (${PROJECT})
 
+cmake_policy(SET CMP0043 OLD)
+cmake_policy(SET CMP0020 NEW)
+
 file(GLOB_RECURSE APP_SRC "src/*.cpp")
 file(GLOB_RECURSE APP_H "src/*.cpp")
 
 # Tell CMake to create the helloworld executable
 add_executable(${PROJECT} ${APP_H} ${APP_SRC})
 
+if (BUILD_WIN32)
+	install(TARGETS ${APP_ROOT_NAME} DESTINATION "${CMAKE_BINARY_DIR}/out/")
+endif()
+	
 include_directories("../../taglib/taglib/mpeg/id3v2/")
 
 # Use the Widgets module from Qt 5.
