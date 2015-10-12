@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH="$PATH:/usr/bin:/usr/sbin:/sbin:/bin"
+
 set -e
 
 TOOL_CMAKE="cmake.exe"
