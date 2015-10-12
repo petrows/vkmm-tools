@@ -23,6 +23,10 @@ qt5_wrap_ui(UI_FILES ${APP_UI})
 # Tell CMake to create the helloworld executable
 add_executable(${PROJECT} ${UI_FILES} ${APP_UI} ${APP_UI_H} ${APP_UI_SRC} ${APP_H} ${APP_SRC})
 
+if (BUILD_WIN32)
+	install(TARGETS ${APP_ROOT_NAME} DESTINATION "${CMAKE_BINARY_DIR}/out/")
+endif()
+
 # Use the Widgets module from Qt 5.
 target_link_libraries(${PROJECT} vkmmapi Qt5::Core Qt5::WebKit Qt5::WebKitWidgets Qt5::Widgets Qt5::Network)
 
