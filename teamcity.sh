@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Exit on command error
 set -e
 
 TOOL_CMAKE="cmake.exe"
