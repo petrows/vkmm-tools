@@ -8,7 +8,23 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++11 -Wall")
+set (BUILD_SYSTEM_ID "")
+# Detect & check OS
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	set (BUILD_LINUX 1)
+	set (BUILD_SYSTEM_ID "linux")
+elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
+	set (BUILD_WIN32 1)
+	set (BUILD_SYSTEM_ID "win")
+else()
+	message(FATAL_ERROR "Unknown build target platform!")
+endif()
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++11")
+
+if (BUILD_LINUX)
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+endif()
 
 set(BUILD_SHARED_LIBS OFF)
 set(ENABLE_STATIC ON)
