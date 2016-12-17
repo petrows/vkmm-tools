@@ -14,6 +14,7 @@
 #include <mpeg/id3v2/id3v2tag.h>
 #include <mpeg/id3v2/frames/urllinkframe.h>
 #include <tstring.h>
+#include <math.h>
 
 using namespace VKMM;
 
