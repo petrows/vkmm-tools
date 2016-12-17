@@ -71,7 +71,7 @@ QUrl LoginManager::getLoginUrl()
 
 	QUrlQuery loginQuery;
 
-	loginQuery.addQueryItem("client_id", QString::number(2929902));
+	loginQuery.addQueryItem("client_id", QString::number(3697615));
 	loginQuery.addQueryItem("display","popup");
 	loginQuery.addQueryItem("redirect_uri","close.html");
 	loginQuery.addQueryItem("response_type","token");
